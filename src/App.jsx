@@ -1859,7 +1859,7 @@ const SHOP_SATISFIED = [
 const BROWSE_OFFS = ["8%", "12%", "17%", "23%", "10%", "26%", "20%"];
 const BROWSE_PRICES = ["18,400", "37,160", "29,200", "14,800", "38,700", "22,100", "30,160"];
 const browsePrice = (i) => ({ off: BROWSE_OFFS[i % BROWSE_OFFS.length], price: BROWSE_PRICES[i % BROWSE_PRICES.length] });
-function SearchPage({ onBack, picked, onTogglePick, initialQuery = "", onRequest, browse = false, onProductClick, onNav, onQueryChange, initialBcat = "전체", onBcatChange, initialPage = 1, onPageChange }) {
+function SearchPage({ onBack, picked, onTogglePick, initialQuery = "", onRequest, browse = false, onProductClick, onNav, onQueryChange, initialBcat = "전체", onBcatChange, initialPage = 1, onPageChange, favorites = [] }) {
   const [q, setQ] = useState(initialQuery);
   const [page, setPage] = useState(initialPage);
   const [bcat, setBcat] = useState(initialBcat);
@@ -1879,10 +1879,13 @@ function SearchPage({ onBack, picked, onTogglePick, initialQuery = "", onRequest
   // 검색어 토큰 중 하나라도 브랜드/제품명/태그에 포함되면 노출 (원본 인덱스 보존)
   const alias = SEARCH_ALIASES[q.trim()]; // 별칭이면 해당 제품만 정확 매칭
   const tokens = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  const catTags = browse ? BROWSE_CAT_TAGS[bcat] : null; // 카테고리 필터
+  const isFavCat = browse && bcat === "즐겨찾기"; // 즐겨찾기 칩 선택
+  const catTags = browse && !isFavCat ? BROWSE_CAT_TAGS[bcat] : null; // 카테고리 필터
   const results = SEARCH_RESULTS.map((p, i) => ({ ...p, _i: i })).filter((p) => {
+    if (isFavCat) return favorites.includes(p.brand + "|" + p.name);
     if (catTags && !p.tags.some(([l, t]) => catTags.includes(t))) return false;
     if (alias) return p.brand + " " + p.name === alias;
+    if (!tokens.length) return browse; // 브라우즈: 검색어 없으면 (카테고리 내) 전체 노출
     const hay = (p.brand + " " + p.name + " " + p.tags.map(([l]) => l).join(" ")).toLowerCase();
     return tokens.some((t) => hay.includes(t));
   });
@@ -1922,7 +1925,117 @@ function SearchPage({ onBack, picked, onTogglePick, initialQuery = "", onRequest
         <SearchIcon />
       </div>
 
-      {!hasQuery ? (
+      {browse ? (
+        <>
+          <div className="shop-chips sr-bcats">
+            {["전체", "즐겨찾기", ...BROWSE_CATS.slice(1)].map((c) => (
+              <button key={c} className={"rt-chip shop-chip" + (bcat === c ? " on" : "")} onClick={() => { setBcat(c); setPage(1); }}>
+                {c}
+              </button>
+            ))}
+          </div>
+          {isFavCat ? (
+            <div className="sr-browse-scroll">
+              {results.length > 0 ? (
+                <div className="sameline-grid sr-browse-grid">
+                  {pageResults.map((p) => {
+                    const pr = browsePrice(p._i);
+                    return (
+                      <button className={"sameline-card shop-card" + (canShopDetail(p) ? " link" : "")} key={p._i} onClick={() => canShopDetail(p) && onProductClick && onProductClick({ ...p, ...pr })}>
+                        <div className="sameline-thumb">
+                          <img src={p.img} alt="" draggable="false" />
+                        </div>
+                        <div className="sameline-brand">{p.brand}</div>
+                        <div className="sameline-name">{p.name}</div>
+                        <div className="sameline-price">
+                          <span className="sameline-off">{pr.off}</span> {pr.price}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="sr-fav-empty">
+                  <HeartIcon filled={false} />
+                  <p>아직 하트를 누른 상품이 없어요</p>
+                  <span>상품 상세에서 하트를 누르면 여기에 모여요</span>
+                </div>
+              )}
+            </div>
+          ) : !hasQuery && bcat === "전체" ? (
+            <div className="sr-terms">
+              <div className="sr-term-title">최근 검색어</div>
+              <div className="sr-chips">
+                {RECENT_SEARCHES.map((t) => (
+                  <button key={t} className="sr-chip recent" onClick={() => { setQ(t); setPage(1); }}>
+                    {t}
+                  </button>
+                ))}
+              </div>
+              <div className="sr-term-title reco">추천 검색어</div>
+              <div className="sr-chips">
+                {RECO_SEARCHES.map((t) => (
+                  <button key={t} className="sr-chip reco" onClick={() => { setQ(t); setPage(1); }}>
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="sr-browse-scroll">
+              <div className="sameline-grid sr-browse-grid">
+                {pageResults.map((p) => {
+                  const pr = browsePrice(p._i);
+                  return (
+                    <button className={"sameline-card shop-card" + (canShopDetail(p) ? " link" : "")} key={p._i} onClick={() => canShopDetail(p) && onProductClick && onProductClick({ ...p, ...pr })}>
+                      <div className="sameline-thumb">
+                        <img src={p.img} alt="" draggable="false" />
+                      </div>
+                      <div className="sameline-brand">{p.brand}</div>
+                      <div className="sameline-name">{p.name}</div>
+                      <div className="sameline-price">
+                        <span className="sameline-off">{pr.off}</span> {pr.price}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+              {results.length > 0 && totalPages > 1 && (
+                <div className="sr-pager">
+                  {Array.from({ length: totalPages }, (_, k) => k + 1).map((n) => (
+                    <button key={n} className={"sr-page" + (n === curPage ? " on" : "")} onClick={() => setPage(n)}>
+                      {n}
+                    </button>
+                  ))}
+                </div>
+              )}
+              <div className="section-head sr-sec2">
+                <h2 className="section-title">
+                  이전에 만족한 <span className="shop-cat-hl">크림</span>이에요
+                </h2>
+                <button className="see-all shop-see-all">
+                  전체보기 <ChevronRight />
+                </button>
+              </div>
+              <div className="sameline-grid sr-browse-grid">
+                {SHOP_SATISFIED.map((p, i) => (
+                  <button className={"sameline-card shop-card" + (canShopDetail(p) ? " link" : "")} key={i} onClick={() => canShopDetail(p) && onProductClick && onProductClick(p)}>
+                    <div className="sameline-thumb">
+                      <img src={p.img} alt="" draggable="false" />
+                    </div>
+                    <div className="sameline-brand">{p.brand}</div>
+                    <div className="sameline-name">{p.name}</div>
+                    <div className="sameline-price">
+                      <span className="sameline-off">{p.off}</span> {p.price}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          <BottomNav active="left" onNav={onNav} />
+        </>
+      ) : !hasQuery ? (
         <div className="sr-terms">
           <div className="sr-term-title">최근 검색어</div>
           <div className="sr-chips">
@@ -1941,67 +2054,6 @@ function SearchPage({ onBack, picked, onTogglePick, initialQuery = "", onRequest
             ))}
           </div>
         </div>
-      ) : browse ? (
-        <>
-          <div className="shop-chips sr-bcats">
-            {BROWSE_CATS.map((c) => (
-              <button key={c} className={"rt-chip shop-chip" + (bcat === c ? " on" : "")} onClick={() => setBcat(c)}>
-                {c}
-              </button>
-            ))}
-          </div>
-          <div className="sr-browse-scroll">
-            <div className="sameline-grid sr-browse-grid">
-              {pageResults.map((p) => {
-                const pr = browsePrice(p._i);
-                return (
-                  <button className={"sameline-card shop-card" + (canShopDetail(p) ? " link" : "")} key={p._i} onClick={() => canShopDetail(p) && onProductClick && onProductClick({ ...p, ...pr })}>
-                    <div className="sameline-thumb">
-                      <img src={p.img} alt="" draggable="false" />
-                    </div>
-                    <div className="sameline-brand">{p.brand}</div>
-                    <div className="sameline-name">{p.name}</div>
-                    <div className="sameline-price">
-                      <span className="sameline-off">{pr.off}</span> {pr.price}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-            {results.length > 0 && totalPages > 1 && (
-              <div className="sr-pager">
-                {Array.from({ length: totalPages }, (_, k) => k + 1).map((n) => (
-                  <button key={n} className={"sr-page" + (n === curPage ? " on" : "")} onClick={() => setPage(n)}>
-                    {n}
-                  </button>
-                ))}
-              </div>
-            )}
-            <div className="section-head sr-sec2">
-              <h2 className="section-title">
-                이전에 만족한 <span className="shop-cat-hl">크림</span>이에요
-              </h2>
-              <button className="see-all shop-see-all">
-                전체보기 <ChevronRight />
-              </button>
-            </div>
-            <div className="sameline-grid sr-browse-grid">
-              {SHOP_SATISFIED.map((p, i) => (
-                <button className={"sameline-card shop-card" + (canShopDetail(p) ? " link" : "")} key={i} onClick={() => canShopDetail(p) && onProductClick && onProductClick(p)}>
-                  <div className="sameline-thumb">
-                    <img src={p.img} alt="" draggable="false" />
-                  </div>
-                  <div className="sameline-brand">{p.brand}</div>
-                  <div className="sameline-name">{p.name}</div>
-                  <div className="sameline-price">
-                    <span className="sameline-off">{p.off}</span> {p.price}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-          <BottomNav active="left" onNav={onNav} />
-        </>
       ) : (
         <>
           {/* Figma Frame 111 — 세로 오토레이아웃 gap 40 (결과 → 밴드 → footer) */}
@@ -6498,7 +6550,24 @@ const PAY_TERMS = [
   "(선택) 마케팅 정보 수신 동의",
 ];
 
-function ShopProductDetail({ onBack, onCart, cartCount = 0, onBuy, onSearch, onRoutine }) {
+// 즐겨찾기 key — 쇼핑 상세(아토베리아 365 하이드로 수딩크림) 전용
+const SPD_FAV_KEY = "에스트라|아토베리아 365 하이드로 수딩크림";
+// Figma 739-33097 하트 (기본 비활성=코랄 아웃라인, 활성=코랄 채움)
+function HeartIcon({ filled }) {
+  return (
+    <svg width="23" height="21" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 20.3l-1.45-1.32C5.4 14.24 2 11.16 2 7.5 2 4.42 4.42 2 7.5 2c1.74 0 3.41.81 4.5 2.09C13.09 2.81 14.76 2 16.5 2 19.58 2 22 4.42 22 7.5c0 3.66-3.4 6.74-8.55 11.48L12 20.3z"
+        fill={filled ? "#ff5160" : "none"}
+        stroke="#ff5160"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function ShopProductDetail({ onBack, onCart, cartCount = 0, onBuy, onSearch, onRoutine, fav = false, onToggleFav }) {
   const [tab, setTab] = useState("상세정보");
   const [expanded, setExpanded] = useState(false);
   const [comboItems, setComboItems] = useState(SPD_COMBO_INIT);
@@ -6546,7 +6615,15 @@ function ShopProductDetail({ onBack, onCart, cartCount = 0, onBuy, onSearch, onR
         <div className="spd-pad spd-info">
           <div className="spd-shop">
             <span className="spd-shop-brand">에스트라</span> <ChevronRight />
-            <span className="spd-like">♥ 257.7만</span>
+            <button
+              className={"spd-like" + (fav ? " on" : "")}
+              onClick={onToggleFav}
+              aria-pressed={fav}
+              aria-label={fav ? "즐겨찾기 해제" : "즐겨찾기"}
+            >
+              <HeartIcon filled={fav} />
+              <span className="spd-like-count">{fav ? "257.8만" : "257.7만"}</span>
+            </button>
           </div>
           <div className="spd-info-line" />
           <h1 className="spd-name">아토베리아 365 하이드로 수딩크림</h1>
@@ -7617,6 +7694,9 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState(saved?.searchQuery ?? ""); // 검색 페이지 초기 검색어
   const [searchBcat, setSearchBcat] = useState("전체"); // 검색(브라우즈) 카테고리 — 상세 왕복 시 유지
   const [searchPageNum, setSearchPageNum] = useState(1); // 검색 페이지네이션 — 상세 왕복 시 유지
+  const [favorites, setFavorites] = useState([]); // 하트(즐겨찾기)한 제품 key: "브랜드|제품명"
+  const toggleFav = (key) =>
+    setFavorites((s) => (s.includes(key) ? s.filter((k) => k !== key) : [...s, key]));
   const [regResult, setRegResult] = useState(saved?.regResult ?? []); // 등록 완료된 제품 rows
   const [albumPicked, setAlbumPicked] = useState([]); // 앨범에서 선택한 사진 셀 인덱스
   const [reqReturn, setReqReturn] = useState("search"); // 상품 등록 요청 페이지에서 뒤로 갈 화면
@@ -7890,6 +7970,8 @@ export default function App() {
       ) : page === "shopdetail" ? (
         <ShopProductDetail
           onBack={() => setPage(shopDetailReturn)}
+          fav={favorites.includes(SPD_FAV_KEY)}
+          onToggleFav={() => toggleFav(SPD_FAV_KEY)}
           onCart={() => { setCartReturn("shopdetail"); setPage("cart"); }}
           cartCount={cartItems.length}
           onBuy={() => {
@@ -8031,6 +8113,7 @@ export default function App() {
             onBcatChange={setSearchBcat}
             initialPage={searchPageNum}
             onPageChange={setSearchPageNum}
+            favorites={favorites}
             browse={searchReturn === "shop" || searchReturn === "shopdetail"}
             onProductClick={(p) => openShopDetail(p, page)}
             onNav={(w) => {

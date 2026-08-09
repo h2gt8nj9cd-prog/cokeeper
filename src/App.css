@@ -234,6 +234,9 @@
   overflow: hidden;
   background: #000000;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden; /* iOS Safari: 접힘 중 뒷면/이음새 깜빡임 방지 */
+  will-change: transform;
+  transform-style: preserve-3d;
 }
 /* 윗장(0~68px), 아랫장(68~122px) — 분할선 위치와 동일 */
 .fc-top,
@@ -7730,9 +7733,56 @@
 }
 .spd-like {
   margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 2px;
+}
+.spd-like svg {
+  display: block;
+  transition: transform 0.14s ease;
+}
+.spd-like:active svg {
+  transform: scale(0.84);
+}
+.spd-like.on svg {
+  animation: heartPop 0.3s ease;
+}
+@keyframes heartPop {
+  0% { transform: scale(0.7); }
+  55% { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+.spd-like-count {
   font-size: 12px;
   font-weight: 400;
   color: #ff5160;
+}
+/* 즐겨찾기 칩 결과 없을 때 */
+.sr-fav-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 88px 24px 40px;
+  text-align: center;
+}
+.sr-fav-empty svg {
+  width: 42px;
+  height: 38px;
+  opacity: 0.45;
+  margin-bottom: 4px;
+}
+.sr-fav-empty p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #555555;
+}
+.sr-fav-empty span {
+  font-size: 12.5px;
+  color: #a8a8a8;
 }
 .spd-info-line {
   height: 1px;

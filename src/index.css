@@ -2,7 +2,15 @@
   font-family: "Helvetica Compressed";
   src: url("/fonts/HelveticaCompressed.otf") format("opentype");
   font-weight: 400;
-  font-display: swap;
+  /* 플립 숫자는 잠깐 늦게 뜨더라도 대체폰트 깜빡임 없이 항상 압축체로 */
+  font-display: block;
+}
+/* 플립 숫자 폴백 (Helvetica Compressed 없는 환경 대비) — 자체 호스팅 */
+@font-face {
+  font-family: "Anton";
+  src: url("/fonts/anton.woff2") format("woff2");
+  font-weight: 400;
+  font-display: block;
 }
 
 * {
@@ -16,19 +24,27 @@ body {
   padding: 0;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 body {
   font-family: "Pretendard Variable", Pretendard, -apple-system,
     BlinkMacSystemFont, system-ui, sans-serif;
-  background: #ffffff;
+  /* 프레임 바깥(레터박스) 배경 */
+  background: #f4f4f6;
   color: #26262b;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 24px 0;
   -webkit-font-smoothing: antialiased;
-  /* 브라우저 폭이 좁아도 프레임을 줄이지 않고 가로 스크롤로 처리 */
-  overflow-x: auto;
+  /* 페이지 자체는 절대 스크롤되지 않음 — 내부 .screen 만 스크롤 */
+  overflow: hidden;
+}
+
+/* 사용자 해상도에 맞춰 프레임을 화면 정중앙에 꽉 차게 배치 */
+#root {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
 }
 
 button {
@@ -48,19 +64,33 @@ li {
   list-style: none;
 }
 
-/* ===== iPhone 14 Pro device frame (393 x 852pt) — 항상 고정 크기 ===== */
+/* ===== iPhone 14 Pro 디자인 프레임 (393 x 852pt) =====
+   내부는 항상 393x852 고정 → 절대 위치 좌표 그대로 유효.
+   전체를 --phone-scale(뷰포트 맞춤 배율)로 비율 유지 스케일해
+   사용자 화면 상하를 100% 채우고 여분 스크롤을 제거한다. */
 .phone {
-  position: relative;
+  position: absolute;
+  top: 50%;
+  left: 50%;
   width: 393px;
-  min-width: 393px;
-  max-width: 393px;
   height: 852px;
-  flex-shrink: 0; /* 좁은 뷰포트에서도 프레임이 눌리지 않음 */
+  transform: translate(-50%, -50%) scale(var(--phone-scale, 1));
+  transform-origin: center center;
   background: #ffffff;
-  border: 1px solid #ececec;
-  border-radius: 4px;
   overflow: hidden;
-  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.06);
+}
+
+/* ===== 데스크탑: 폰 목업 (기기 프레임 + 배경) ===== */
+.is-desktop body {
+  background: radial-gradient(120% 120% at 50% 0%, #eef0f4 0%, #e2e4ea 100%);
+}
+.is-desktop .phone {
+  border-radius: 46px;
+  /* 얇은 베젤 + 부드러운 기기 그림자 */
+  box-shadow:
+    0 0 0 11px #101114,
+    0 0 0 12px #2a2c31,
+    0 34px 70px rgba(20, 22, 28, 0.32);
 }
 
 /* Scrollable screen content */
