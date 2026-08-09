@@ -86,30 +86,34 @@ li {
 }
 .is-desktop .phone {
   border-radius: 54px; /* iPhone 14 Pro 화면 코너 */
-  /* 얇은 검은 스크린 베젤 → 그래파이트 티타늄 밴드(엣지 하이라이트) → 기기 그림자 */
+  /* 검은 스크린 베젤 → 얇은 그래파이트 밴드(엣지 하이라이트) → 반투명 흰색 테두리 → 그림자 */
   box-shadow:
     0 0 0 2px #000000,
-    0 0 0 10px #1c1e22,
-    0 0 0 11px #45484f,
-    0 0 0 13px #101216,
-    0 28px 58px rgba(10, 11, 14, 0.42),
-    0 10px 24px rgba(10, 11, 14, 0.3);
+    0 0 0 6px #1c1e22,
+    0 0 0 7px #45484f,
+    0 0 0 8px #0e0f13,
+    0 0 0 10px rgba(255, 255, 255, 0.55),
+    0 26px 56px rgba(10, 11, 14, 0.4),
+    0 10px 22px rgba(10, 11, 14, 0.28);
 }
-/* 측면 버튼(그래파이트): 오른쪽 전원 + 왼쪽 볼륨 2개(박스섀도 오프셋) */
+/* 측면 버튼: 오른쪽 전원(기준) + 왼쪽 볼륨 업/다운(박스섀도 오프셋).
+   왼쪽 오프셋 = -(393 + 우측 protrude 10 + 좌측 protrude 10 + width 4) ≈ -417 */
 .is-desktop .phone::before {
   content: "";
   position: absolute;
-  top: 216px;
-  right: -13px;
-  width: 3px;
-  height: 58px;
+  top: 208px;
+  right: -10px;
+  width: 4px;
+  height: 66px;
   border-radius: 2px;
-  background: linear-gradient(90deg, #2a2c31, #4a4d54);
+  background: linear-gradient(90deg, #34373d 0%, #55585f 55%, #2c2e33 100%);
   z-index: 55;
   pointer-events: none;
   box-shadow:
-    -415px -18px 0 0 #3d4046,
-    -415px 52px 0 0 #3d4046;
+    /* 왼쪽 볼륨 업 */
+    -409px -12px 0 0 #4a4d54,
+    /* 왼쪽 볼륨 다운 */
+    -409px 62px 0 0 #4a4d54;
 }
 /* 다이나믹 아일랜드 (+ 카메라 렌즈 점) — 앱 상태바 중앙 위에 오버레이 */
 .is-desktop .phone::after {
