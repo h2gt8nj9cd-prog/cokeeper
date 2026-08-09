@@ -1,0 +1,87 @@
+@font-face {
+  font-family: "Helvetica Compressed";
+  src: url("/fonts/HelveticaCompressed.otf") format("opentype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, sans-serif;
+  background: #ffffff;
+  color: #26262b;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 0;
+  -webkit-font-smoothing: antialiased;
+  /* 브라우저 폭이 좁아도 프레임을 줄이지 않고 가로 스크롤로 처리 */
+  overflow-x: auto;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+
+ul,
+ol,
+li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ===== iPhone 14 Pro device frame (393 x 852pt) — 항상 고정 크기 ===== */
+.phone {
+  position: relative;
+  width: 393px;
+  min-width: 393px;
+  max-width: 393px;
+  height: 852px;
+  flex-shrink: 0; /* 좁은 뷰포트에서도 프레임이 눌리지 않음 */
+  background: #ffffff;
+  border: 1px solid #ececec;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.06);
+}
+
+/* Scrollable screen content */
+.screen {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  /* leave room so content isn't hidden behind the fixed nav */
+  padding-bottom: 150px;
+}
+/* 하단 네비가 없는 서브 페이지는 여백 축소 (홈 인디케이터만) */
+.screen.no-nav {
+  padding-bottom: 34px;
+}
+/* 검색 선택 확인 바가 뜨면 그만큼 하단 여백 확보 */
+.screen.sel-active {
+  padding-bottom: 232px;
+}
+.screen::-webkit-scrollbar {
+  display: none;
+}
