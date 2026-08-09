@@ -73,6 +73,13 @@ function currentSection() {
   if (h >= 18 && h < 23) return "저녁"; // 18:00~22:59
   return "자기 전"; // 23:00~05:59
 }
+// 서버(현재) 기준 오늘 날짜 — "YYYY.MM.DD" (AI 브리핑 날짜용)
+function todayDot() {
+  const d = new Date();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}.${mm}.${dd}`;
+}
 // 시계형 루틴 — 시간대별 카드(상품 이미지 + 단계). 아침은 위 ROUTINE_CARDS 재사용
 const SCHEDULE_ROUTINES = {
   아침: ROUTINE_CARDS,
@@ -1581,7 +1588,7 @@ function RoutineModal({ open, onClose, onSave, initialAi = false, seedProduct = 
                     ))}
                   </div>
                   <p className="ai-reason-text">{rep.text(aiTitle)}</p>
-                  <div className="ai-reason-date">2025.05.22</div>
+                  <div className="ai-reason-date">{todayDot()}</div>
                 </>
               )}
             </div>
@@ -3348,7 +3355,7 @@ function RoutineTab({ onNav, onCreateRoutine, initialChip }) {
                       마지막으로 자기 전 건조하지 않게 <u>수분크림을 두껍게 올린 후 수분팩</u>을 해주세요 뷰티 디바이스가 있다면
                       사용해도 좋아요. 🤗
                     </p>
-                    <div className="ai-reason-date">2025.05.22</div>
+                    <div className="ai-reason-date">{todayDot()}</div>
                   </>
                 )}
               </div>
@@ -3541,7 +3548,7 @@ function RoutineTab({ onNav, onCreateRoutine, initialChip }) {
                     ))}
                   </div>
                   <p className="ai-reason-text">{comboReport.text}</p>
-                  <div className="ai-reason-date">2025.05.22</div>
+                  <div className="ai-reason-date">{todayDot()}</div>
                 </div>
               </div>
             ))}
@@ -4455,7 +4462,7 @@ function HistoryTab({ product }) {
                 <u>민감도가 높아진 상태</u>로 분석됩니다. 피부 장벽이 약해지면서 <u>수분 손실</u>이 늘어나고 있으며, 이를 보완하기
                 위해 <u>유분 분비가 증가</u>하고 있을 가능성이 있습니다.😥
               </p>
-              <div className="ai-reason-date">2025.05.22</div>
+              <div className="ai-reason-date">{todayDot()}</div>
             </>
           )}
         </div>
@@ -4945,7 +4952,7 @@ function ProductDetail({ product, onBack, onDelete, onCreateRoutine, fav = false
               ))}
             </div>
             <p className="ai-reason-text">{betterTogetherFor(p)(p.name)}</p>
-            <div className="ai-reason-date">2025.05.22</div>
+            <div className="ai-reason-date">{todayDot()}</div>
           </>
         )}
       </div>
@@ -5119,7 +5126,7 @@ function ProductDetail({ product, onBack, onDelete, onCreateRoutine, fav = false
                       ))}
                     </div>
                     <p className="ai-reason-text">{rep.text(p.name)}</p>
-                    <div className="ai-reason-date">2025.05.22</div>
+                    <div className="ai-reason-date">{todayDot()}</div>
                   </>
                 )}
               </div>
@@ -5598,7 +5605,7 @@ function WeatherPage({ onBack, onNav, onProductClick }) {
                     않도록 <u>수분 크림</u>과 피부온도를 낮추는 <u>쿨링팩</u>을 추천해드릴게요! 외출을 준비 중이시라면{" "}
                     <u>자외선차단제</u>도 잊지마세요. 😎
                   </p>
-                  <div className="ai-reason-date">2025.05.22</div>
+                  <div className="ai-reason-date">{todayDot()}</div>
                 </>
               )}
             </div>
@@ -6771,7 +6778,7 @@ function ShopProductDetail({ onBack, onCart, cartCount = 0, onBuy, onSearch, onR
                     ))}
                   </div>
                   <p className="ai-reason-text">{comboReport.text}</p>
-                  <div className="ai-reason-date">2025.05.22</div>
+                  <div className="ai-reason-date">{todayDot()}</div>
                 </div>
               </div>
             ))}
@@ -6895,7 +6902,7 @@ function BuyModal({ variant, onClose, onBuy, onProceed }) {
                     <p className="ai-reason-text">
                       저분자 히알루론산과 세라마이드가 속수분을 채우고 피부 장벽을 탄탄하게 잡아줘, 건조하고 예민해진 수부지 피부에 잘 맞아요. 유수분 밸런스를 맞추며 자극 없이 순하게 쓸 수 있는 제품이에요. 💧
                     </p>
-                    <div className="ai-reason-date">2025.05.22</div>
+                    <div className="ai-reason-date">{todayDot()}</div>
                   </>
                 )}
               </div>
@@ -6935,7 +6942,7 @@ function BuyModal({ variant, onClose, onBuy, onProceed }) {
                     <p className="ai-reason-text">
                       저분자 히알루론산과 세라마이드가 속수분을 채우고 피부 장벽을 탄탄하게 잡아줘, 건조하고 예민해진 수부지 피부에 잘 맞아요. 유수분 밸런스를 맞추며 자극 없이 순하게 쓸 수 있는 제품이에요. 💧
                     </p>
-                    <div className="ai-reason-date">2025.05.22</div>
+                    <div className="ai-reason-date">{todayDot()}</div>
                   </>
                 )}
               </div>
