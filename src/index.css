@@ -86,15 +86,14 @@ li {
 }
 .is-desktop .phone {
   border-radius: 54px; /* iPhone 14 Pro 화면 코너 */
-  /* 검은 스크린 베젤 → 얇은 그래파이트 밴드(엣지 하이라이트) → 반투명 흰색 테두리 → 그림자 */
+  /* 검은 스크린 베젤 → 그래파이트 티타늄 밴드 → 폴리시드 하이라이트 엣지 → 외곽 라인 → 그림자 */
   box-shadow:
     0 0 0 2px #000000,
-    0 0 0 6px #1c1e22,
-    0 0 0 7px #45484f,
-    0 0 0 8px #0e0f13,
-    0 0 0 10px rgba(255, 255, 255, 0.55),
-    0 26px 56px rgba(10, 11, 14, 0.4),
-    0 10px 22px rgba(10, 11, 14, 0.28);
+    0 0 0 11px #1b1d22,
+    0 0 0 12px #737680,
+    0 0 0 13px #0b0c0f,
+    0 26px 56px rgba(8, 9, 12, 0.42),
+    0 10px 24px rgba(8, 9, 12, 0.3);
 }
 /* 측면 버튼 — .phone은 overflow:hidden 이라 밖으로 나가는 자식이 잘림.
    그래서 클리핑 없는 #root 의사요소에 그리고, --phone-scale 로 폰 가장자리에 정확히 정렬.
@@ -113,14 +112,14 @@ li {
 .is-desktop #root::after {
   height: calc(66px * var(--phone-scale, 1));
   top: calc(50% + (200px - 426px) * var(--phone-scale, 1));
-  left: calc(50% + 206.5px * var(--phone-scale, 1));
+  left: calc(50% + 209.5px * var(--phone-scale, 1));
   background: linear-gradient(90deg, #34373d, #55585f 55%, #2c2e33);
 }
 /* 왼쪽 볼륨 업/다운 (py 195 / 265, h 52) — 아래 하나는 box-shadow 로 복제 */
 .is-desktop #root::before {
   height: calc(52px * var(--phone-scale, 1));
   top: calc(50% + (195px - 426px) * var(--phone-scale, 1));
-  left: calc(50% - 212.5px * var(--phone-scale, 1));
+  left: calc(50% - 215.5px * var(--phone-scale, 1));
   background: #4a4d54;
   box-shadow: 0 calc(70px * var(--phone-scale, 1)) 0 0 #4a4d54;
 }
@@ -135,7 +134,7 @@ li {
   height: 34px;
   border-radius: 19px;
   background:
-    radial-gradient(circle at 76% 50%, #12202e 0 3.4px, rgba(18, 32, 46, 0) 4.2px),
+    radial-gradient(circle at 24% 50%, #12202e 0 3.4px, rgba(18, 32, 46, 0) 4.2px),
     #000000;
   z-index: 60;
   pointer-events: none;
