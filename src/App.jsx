@@ -3647,7 +3647,7 @@ function RoutineTab({ onNav, onCreateRoutine, initialChip }) {
   );
 }
 
-function CabinetPage({ onAddProduct, onNav, onProductClick, onCreateRoutine, initialTab = "제품", initialChip, autoScroll = false }) {
+function CabinetPage({ onAddProduct, onNav, onProductClick, onCreateRoutine, initialTab = "제품", initialChip, autoScroll = false, favorites = [] }) {
   const [tab, setTab] = useState(initialTab);
   const scrollRef = useRef(null);
   // 하위 메뉴(기초/색조 세그먼트)가 위에 살짝 갭 두고 보이도록 부드럽게 스크롤 (빨간 히어로는 가려짐)
@@ -3689,8 +3689,10 @@ function CabinetPage({ onAddProduct, onNav, onProductClick, onCreateRoutine, ini
     setShown(6);
   }, [seg, cat, imminent, tab]);
   const isColor = (p) => p.tags.some(([l]) => l === "색조");
+  const isFavCat = cat === "즐겨찾기"; // 즐겨찾기 칩 선택 → 하트한 제품만
   // 기초/색조 세그먼트 + 카테고리 칩 + 임박(빨간 뱃지=2주 이내) 필터
   const filtered = CABINET_PRODUCTS.filter((p) => {
+    if (isFavCat) return favorites.includes(p.brand + "|" + p.name);
     const segOk = seg === "색조" ? isColor(p) : !isColor(p);
     const catOk = cat === "전체" || p.tags.some(([l]) => l === cat);
     const immOk = !imminent || badgeColor(p.badge) === "#FF5160";
@@ -3731,7 +3733,7 @@ function CabinetPage({ onAddProduct, onNav, onProductClick, onCreateRoutine, ini
         </button>
       </div>
       <div className="cab-chips">
-        {CABINET_CATS.map((c) => (
+        {["전체", "즐겨찾기", ...CABINET_CATS.slice(1)].map((c) => (
           <button key={c} className={"cab-chip" + (cat === c ? " on" : "")} onClick={() => setCat(c)}>
             {c}
           </button>
@@ -4789,10 +4791,9 @@ function EditOpenDateModal({ open, product, onClose, onSave }) {
     </div>
   );
 }
-function ProductDetail({ product, onBack, onDelete, onCreateRoutine }) {
+function ProductDetail({ product, onBack, onDelete, onCreateRoutine, fav = false, onToggleFav }) {
   const [tab, setTab] = useState("제품정보");
   const [segIdx, setSegIdx] = useState(0); // 0=첫 탭(포함된 루틴/추천 제품), 1=주요 성분
-  const [liked, setLiked] = useState(false);
   const [aiOpen, setAiOpen] = useState(true);
   const [betterOpen, setBetterOpen] = useState(true); // "이렇게 쓰면 더 좋아요" 토글
   const [editOpen, setEditOpen] = useState(false); // 개봉일 편집 모달
@@ -5136,13 +5137,13 @@ function ProductDetail({ product, onBack, onDelete, onCreateRoutine }) {
       {/* 하단 바 (Figma 685-17049) */}
       <div className="pd-bottombar">
         <div className="pd-actionpill">
-          <button className="pd-heart" onClick={() => setLiked((v) => !v)} aria-label="찜">
-            {/* 공유 버튼과 동일한 스트록 두께(1.7)로 통일 */}
+          <button className={"pd-heart" + (fav ? " on" : "")} onClick={onToggleFav} aria-pressed={fav} aria-label={fav ? "즐겨찾기 해제" : "즐겨찾기"}>
+            {/* 활성 시 스트록 제거(채움만), 비활성 시 회색 아웃라인 */}
             <svg width="23" height="23" viewBox="0 0 24 24" fill="none">
               <path
                 d="M12 20.3C12 20.3 3.2 14.6 3.2 8.5C3.2 5.6 5.4 3.4 8.1 3.4C9.9 3.4 11.4 4.4 12 5.8C12.6 4.4 14.1 3.4 15.9 3.4C18.6 3.4 20.8 5.6 20.8 8.5C20.8 14.6 12 20.3 12 20.3Z"
-                fill={liked ? "#FF5160" : "none"}
-                stroke={liked ? "#FF5160" : "#424242"}
+                fill={fav ? "#FF5160" : "none"}
+                stroke={fav ? "none" : "#424242"}
                 strokeWidth="1.7"
                 strokeLinejoin="round"
               />
@@ -6559,7 +6560,7 @@ function HeartIcon({ filled }) {
       <path
         d="M12 20.3l-1.45-1.32C5.4 14.24 2 11.16 2 7.5 2 4.42 4.42 2 7.5 2c1.74 0 3.41.81 4.5 2.09C13.09 2.81 14.76 2 16.5 2 19.58 2 22 4.42 22 7.5c0 3.66-3.4 6.74-8.55 11.48L12 20.3z"
         fill={filled ? "#ff5160" : "none"}
-        stroke="#ff5160"
+        stroke={filled ? "none" : "#ff5160"}
         strokeWidth="1.8"
         strokeLinejoin="round"
       />
@@ -7899,6 +7900,7 @@ export default function App() {
           initialTab={cabinetInit?.tab ?? "제품"}
           initialChip={cabinetInit?.chip}
           autoScroll={cabinetInit?.scroll ?? false}
+          favorites={favorites}
           onAddProduct={() => setPage("add")}
           onNav={(w) => (w === "left" ? setPage("shop") : w === "center" ? goHome() : null)}
           onCreateRoutine={() => setModalOpen(true)}
@@ -7907,6 +7909,8 @@ export default function App() {
       ) : page === "pdetail" ? (
         <ProductDetail
           product={detailProduct}
+          fav={!!detailProduct && favorites.includes(detailProduct.brand + "|" + detailProduct.name)}
+          onToggleFav={() => detailProduct && toggleFav(detailProduct.brand + "|" + detailProduct.name)}
           onBack={() => setPage(detailReturn)}
           onDelete={() => setPage(detailReturn)}
           onCreateRoutine={(seed) => {

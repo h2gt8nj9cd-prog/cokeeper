@@ -39,7 +39,8 @@
           var w = vv ? vv.width : window.innerWidth;
           var h = vv ? vv.height : window.innerHeight;
           var isDesktop = w >= 700; // 넓은 화면 → 폰 목업
-          var s = isDesktop ? Math.min((h - 56) / 852, 1) : h / 852;
+          // 모바일은 가짜 상태바(62px)를 제거해 유효 프레임 높이 790 → 실측에 가깝게(축소↓)
+          var s = isDesktop ? Math.min((h - 120) / 852, 1) : h / 790;
           document.documentElement.style.setProperty("--phone-scale", s);
           document.documentElement.classList.toggle("is-desktop", isDesktop);
         }
