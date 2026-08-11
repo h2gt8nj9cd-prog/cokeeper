@@ -24,27 +24,18 @@ body {
   padding: 0;
 }
 
-html,
-body {
-  height: 100%;
-}
-
 body {
   font-family: "Pretendard Variable", Pretendard, -apple-system,
     BlinkMacSystemFont, system-ui, sans-serif;
-  /* 프레임 바깥(레터박스) 배경 */
-  background: #f4f4f6;
+  background: #ffffff;
   color: #26262b;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 0;
   -webkit-font-smoothing: antialiased;
-  /* 페이지 자체는 절대 스크롤되지 않음 — 내부 .screen 만 스크롤 */
-  overflow: hidden;
-}
-
-/* 사용자 해상도에 맞춰 프레임을 화면 정중앙에 꽉 차게 배치 */
-#root {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
+  overflow-x: auto;
 }
 
 button {
@@ -64,91 +55,19 @@ li {
   list-style: none;
 }
 
-/* ===== iPhone 14 Pro 디자인 프레임 (393 x 852pt) =====
-   내부는 항상 393x852 고정 → 절대 위치 좌표 그대로 유효.
-   전체를 --phone-scale(뷰포트 맞춤 배율)로 비율 유지 스케일해
-   사용자 화면 상하를 100% 채우고 여분 스크롤을 제거한다. */
+/* ===== iPhone 14 Pro 디자인 프레임 (393 x 852pt) — 고정 크기 ===== */
 .phone {
-  position: absolute;
-  top: 50%;
-  left: 50%;
+  position: relative;
   width: 393px;
+  min-width: 393px;
+  max-width: 393px;
   height: 852px;
-  transform: translate(-50%, -50%) scale(var(--phone-scale, 1));
-  transform-origin: center center;
+  flex-shrink: 0;
   background: #ffffff;
+  border: 1px solid #ececec;
+  border-radius: 4px;
   overflow: hidden;
-}
-
-/* ===== 데스크탑: 실사 iPhone 14 Pro 목업 ===== */
-.is-desktop body {
-  background: radial-gradient(120% 120% at 50% 0%, #eef0f4 0%, #dfe1e7 100%);
-}
-.is-desktop .phone {
-  border-radius: 54px; /* iPhone 14 Pro 화면 코너 */
-  /* 검은 스크린 베젤 → 그래파이트 티타늄 밴드 → 폴리시드 하이라이트 엣지 → 외곽 라인 → 그림자 */
-  box-shadow:
-    0 0 0 2px #000000,
-    0 0 0 7px #1b1d22,
-    0 0 0 8px #737680,
-    0 0 0 9px #0b0c0f,
-    0 24px 52px rgba(8, 9, 12, 0.4),
-    0 9px 20px rgba(8, 9, 12, 0.28);
-}
-/* 다이나믹 아일랜드 (+ 카메라 렌즈 점) — 앱 상태바 중앙 위에 오버레이 */
-.is-desktop .phone::after {
-  content: "";
-  position: absolute;
-  top: 13px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120px;
-  height: 34px;
-  border-radius: 19px;
-  background:
-    radial-gradient(circle at 24% 50%, #12202e 0 3.4px, rgba(18, 32, 46, 0) 4.2px),
-    #000000;
-  z-index: 60;
-  pointer-events: none;
-}
-
-/* ===== 모바일: 실제 폰의 상태바/홈바 사용 =====
-   앱이 그린 가짜 상태바(9:41·wifi)와 홈 인디케이터 제거 → 실제 해상도(축소 최소화).
-   가짜 상태바 62px 만큼 프레임 높이도 줄여 1:1에 가깝게. (데스크탑 목업은 유지) */
-html:not(.is-desktop) .phone {
-  height: 790px;
-}
-html:not(.is-desktop) .statusbar,
-html:not(.is-desktop) .ap-statusbar,
-html:not(.is-desktop) .home-indicator,
-html:not(.is-desktop) .oc-home,
-html:not(.is-desktop) .sheet-home {
-  display: none;
-}
-/* 실제 폰 상태바(날짜·배터리·와이파이) 뒤에 흰 배경을 상단 고정.
-   (스크롤해도 콘텐츠가 이 흰 띠 아래로 지나가며 상태바 영역은 항상 흰색) */
-html:not(.is-desktop) .phone::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: env(safe-area-inset-top, 0px);
-  background: #ffffff;
-  z-index: 100;
-  pointer-events: none;
-}
-/* 페이지 콘텐츠는 상태바(안전영역) 아래에서 시작 */
-html:not(.is-desktop) .screen,
-html:not(.is-desktop) .cabinetpage,
-html:not(.is-desktop) .pdetailpage,
-html:not(.is-desktop) .regpage,
-html:not(.is-desktop) .reqpage,
-html:not(.is-desktop) .confirm-page,
-html:not(.is-desktop) .detectpage,
-html:not(.is-desktop) .flowpage,
-html:not(.is-desktop) .albumpage {
-  top: env(safe-area-inset-top, 0px);
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.06);
 }
 
 /* Scrollable screen content */

@@ -3,10 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
       as="style"
@@ -29,29 +26,6 @@
       crossorigin
     />
     <title>COKEEPER</title>
-    <script>
-      // 뷰포트에 맞춰 393x852 프레임 배율(--phone-scale)을 계산.
-      //  · 모바일(좁은 화면): 세로를 100% 채워 여백 없이 꽉 차게
-      //  · 데스크탑(넓은 화면): 폰을 실물 크기(최대 1x) 안에서 중앙 목업으로
-      (function () {
-        function fit() {
-          var vv = window.visualViewport;
-          var w = vv ? vv.width : window.innerWidth;
-          var h = vv ? vv.height : window.innerHeight;
-          var isDesktop = w >= 700; // 넓은 화면 → 폰 목업
-          // 모바일은 가짜 상태바(62px)를 제거해 유효 프레임 높이 790 → 실측에 가깝게(축소↓)
-          var s = isDesktop ? Math.min((h - 120) / 852, 1) : h / 790;
-          document.documentElement.style.setProperty("--phone-scale", s);
-          document.documentElement.classList.toggle("is-desktop", isDesktop);
-        }
-        fit();
-        window.addEventListener("resize", fit);
-        window.addEventListener("orientationchange", fit);
-        if (window.visualViewport) {
-          window.visualViewport.addEventListener("resize", fit);
-        }
-      })();
-    </script>
   </head>
   <body>
     <div id="root"></div>
