@@ -89,8 +89,7 @@ li {
   .phone {
     height: calc(100dvh / var(--phone-scale, 1));
   }
-  /* 가짜 상태바(9:41) 영역을 통째로 크롭(공간 제거) → 콘텐츠가 위로 올라가
-     실제 폰 상태바 자리를 그대로 사용. 배경색은 상단까지 이어짐(hero 등 bg). */
+  /* 서비스 화면: 가짜 상태바(9:41) 영역을 통째로 크롭 → 콘텐츠 상단 밀착 */
   .statusbar,
   .ap-statusbar {
     display: none !important;
@@ -101,17 +100,9 @@ li {
   .sheet-home {
     display: none !important;
   }
-  /* 온보딩: 이미지에 박힌 9:41 상태바를 흰 배경으로 덮음(공간은 유지) */
-  .onboarding::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 62px;
-    background: #ffffff;
-    z-index: 5;
-    pointer-events: none;
+  /* 온보딩: 이미지에 박힌 상태바(62px)를 서비스 화면과 동일하게 위로 크롭해 정렬 */
+  .onboarding {
+    transform: translateY(-62px);
   }
 }
 
