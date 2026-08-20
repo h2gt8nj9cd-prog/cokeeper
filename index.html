@@ -39,13 +39,15 @@
         function fit() {
           var vv = window.visualViewport;
           var w = vv ? vv.width : window.innerWidth;
-          var h = vv ? vv.height : window.innerHeight;
           var s;
           if (w >= 700) {
+            var h = vv ? vv.height : window.innerHeight;
             s = Math.min(w / 393, h / 852);
           } else {
+            // 모바일: 가로 꽉 채움 + 세로는 '전체 화면 높이'(안전영역 포함)로 →
+            // 하단 59pt까지 채워 네비가 최대한 아래로 내려감 (Onsae처럼)
             s = w / 393;
-            document.documentElement.style.setProperty("--phone-h", h / s);
+            document.documentElement.style.setProperty("--phone-h", window.innerHeight / s);
           }
           document.documentElement.style.setProperty("--phone-scale", s);
         }
