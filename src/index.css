@@ -27,13 +27,15 @@ body {
 html,
 body {
   height: 100%;
+  /* iOS PWA(홈화면 앱)에서 아래 빈 영역을 첫 페인트 때 이 색으로 칠함 → 흰색 */
+  background: #ffffff;
 }
 
 body {
   font-family: "Pretendard Variable", Pretendard, -apple-system,
     BlinkMacSystemFont, system-ui, sans-serif;
-  /* 레터박스(기기 캔버스) — 어두운 중립 */
-  background: #0e0f12;
+  /* 레터박스/빈 영역 배경 — 흰색 */
+  background: #ffffff;
   color: #26262b;
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
