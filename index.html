@@ -3,10 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- Onsae 프로젝트와 동일한 iOS PWA 풀스크린 세팅.
+         viewport-fit=cover + apple 메타 + black-translucent 상태바.
+         theme-color 는 두지 않음(있으면 iOS가 그 단색을 우선함). -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="theme-color" content="#0e0f12" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link
       rel="stylesheet"
       as="style"
@@ -30,14 +33,20 @@
     />
     <title>COKEEPER</title>
     <script>
-      // 모든 기기 동일: 393x852 전체 디자인을 비율 유지로 화면에 맞춤(contain).
-      // = Figma 미러링과 동일하게 디자인 전체를 그대로 보여줌. iPhone 14 Pro 풀스크린이면 1:1.
+      // 모바일(≤699): 가로를 꽉 채워 레터박스 없이 화면을 채움(세로는 스크롤).
+      // 넓은 화면(≥700): 전체 디자인 contain(중앙 목업).
       (function () {
         function fit() {
           var vv = window.visualViewport;
           var w = vv ? vv.width : window.innerWidth;
           var h = vv ? vv.height : window.innerHeight;
-          var s = Math.min(w / 393, h / 852);
+          var s;
+          if (w >= 700) {
+            s = Math.min(w / 393, h / 852);
+          } else {
+            s = w / 393;
+            document.documentElement.style.setProperty("--phone-h", h / s);
+          }
           document.documentElement.style.setProperty("--phone-scale", s);
         }
         fit();

@@ -82,9 +82,12 @@ li {
    CSS 미디어쿼리로 확정 처리(JS 감지와 무관) → 브라우저 기기모드에서도 항상 동작.
    앱이 그린 가짜 상태바(9:41)·홈 인디케이터 제거 → 실제 아이폰 것 사용. */
 @media (max-width: 699px) {
+  /* 가로 꽉 채움 상태에서 세로도 화면에 맞게(프레임 높이 = 뷰포트높이/scale) */
+  .phone {
+    height: calc(var(--phone-h, 852) * 1px);
+  }
   /* 가짜 상태바(9:41)만 숨기고 62px 공간·배경색은 유지 →
-     상단까지 배경색(코랄 등)이 채워지고, 콘텐츠는 실제 폰 상태바 아래로 내려옴.
-     (Figma 미러링과 동일한 상단 여백) */
+     상단까지 배경색(코랄 등)이 채워지고, 콘텐츠는 실제 폰 상태바 아래로 내려옴. */
   .statusbar,
   .ap-statusbar {
     visibility: hidden !important;
@@ -94,6 +97,18 @@ li {
   .oc-home,
   .sheet-home {
     display: none !important;
+  }
+  /* 온보딩: 이미지에 박힌 9:41 상태바를 흰 배경으로 덮음(공간은 유지) */
+  .onboarding::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 62px;
+    background: #ffffff;
+    z-index: 5;
+    pointer-events: none;
   }
 }
 
