@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#0e0f12" />
     <link
       rel="stylesheet"
       as="style"
@@ -26,6 +29,25 @@
       crossorigin
     />
     <title>COKEEPER</title>
+    <script>
+      // 모든 기기 동일: 393x852 디자인을 비율 유지로 화면에 맞춤(contain).
+      // 폰은 비율이 거의 같아 꽉 차고, 태블릿·데스크탑은 중앙 배치 + 레터박스.
+      (function () {
+        function fit() {
+          var vv = window.visualViewport;
+          var w = vv ? vv.width : window.innerWidth;
+          var h = vv ? vv.height : window.innerHeight;
+          var s = Math.min(w / 393, h / 852);
+          document.documentElement.style.setProperty("--phone-scale", s);
+        }
+        fit();
+        window.addEventListener("resize", fit);
+        window.addEventListener("orientationchange", fit);
+        if (window.visualViewport) {
+          window.visualViewport.addEventListener("resize", fit);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

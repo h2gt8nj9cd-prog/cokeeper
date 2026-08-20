@@ -24,18 +24,26 @@ body {
   padding: 0;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 body {
   font-family: "Pretendard Variable", Pretendard, -apple-system,
     BlinkMacSystemFont, system-ui, sans-serif;
-  background: #ffffff;
+  /* 레터박스(기기 캔버스) — 어두운 중립 */
+  background: #0e0f12;
   color: #26262b;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 24px 0;
   -webkit-font-smoothing: antialiased;
-  overflow-x: auto;
+  overflow: hidden;
+}
+
+/* 프레임을 화면 정중앙에 비율 유지로 배치 */
+#root {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
 }
 
 button {
@@ -55,19 +63,19 @@ li {
   list-style: none;
 }
 
-/* ===== iPhone 14 Pro 디자인 프레임 (393 x 852pt) — 고정 크기 ===== */
+/* ===== iPhone 14 Pro 디자인 프레임 (393 x 852pt) =====
+   내부는 항상 393x852 고정 → 절대 위치 좌표 그대로 유효.
+   전체를 --phone-scale(뷰포트 맞춤 배율)로 비율 유지 스케일 → 모든 기기 동일. */
 .phone {
-  position: relative;
+  position: absolute;
+  top: 50%;
+  left: 50%;
   width: 393px;
-  min-width: 393px;
-  max-width: 393px;
   height: 852px;
-  flex-shrink: 0;
+  transform: translate(-50%, -50%) scale(var(--phone-scale, 1));
+  transform-origin: center center;
   background: #ffffff;
-  border: 1px solid #ececec;
-  border-radius: 4px;
   overflow: hidden;
-  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.06);
 }
 
 /* Scrollable screen content */
