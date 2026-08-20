@@ -30,23 +30,15 @@
     />
     <title>COKEEPER</title>
     <script>
-      // 모바일(좁은 화면): 가로를 꽉 채우고(양옆 여백 0) 세로도 화면에 맞게 → 실제 폰 풀스크린.
-      // 넓은 화면(태블릿·데스크탑): 전체 디자인을 비율 유지로 중앙 배치(contain) + 다크 레터박스.
+      // 모든 기기 동일: 393x852 전체 디자인을 비율 유지로 화면에 맞춤(contain).
+      // = Figma 미러링과 동일하게 디자인 전체를 그대로 보여줌. iPhone 14 Pro 풀스크린이면 1:1.
       (function () {
         function fit() {
           var vv = window.visualViewport;
           var w = vv ? vv.width : window.innerWidth;
           var h = vv ? vv.height : window.innerHeight;
-          var isWide = w >= 700;
-          var s;
-          if (isWide) {
-            s = Math.min(w / 393, h / 852);
-          } else {
-            s = w / 393;
-            document.documentElement.style.setProperty("--phone-h", h / s);
-          }
+          var s = Math.min(w / 393, h / 852);
           document.documentElement.style.setProperty("--phone-scale", s);
-          document.documentElement.classList.toggle("is-wide", isWide);
         }
         fit();
         window.addEventListener("resize", fit);

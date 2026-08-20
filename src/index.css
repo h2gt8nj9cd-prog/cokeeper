@@ -82,44 +82,18 @@ li {
    CSS 미디어쿼리로 확정 처리(JS 감지와 무관) → 브라우저 기기모드에서도 항상 동작.
    앱이 그린 가짜 상태바(9:41)·홈 인디케이터 제거 → 실제 아이폰 것 사용. */
 @media (max-width: 699px) {
-  .phone {
-    height: calc(var(--phone-h, 852) * 1px);
-  }
-  /* 가짜 상태바·홈 인디케이터 제거 */
+  /* 가짜 상태바(9:41)만 숨기고 62px 공간·배경색은 유지 →
+     상단까지 배경색(코랄 등)이 채워지고, 콘텐츠는 실제 폰 상태바 아래로 내려옴.
+     (Figma 미러링과 동일한 상단 여백) */
   .statusbar,
-  .ap-statusbar,
+  .ap-statusbar {
+    visibility: hidden !important;
+  }
+  /* 홈 인디케이터 제거 */
   .home-indicator,
   .oc-home,
   .sheet-home {
     display: none !important;
-  }
-  /* 실제 폰 상태바(시간·배터리·와이파이) 뒤 흰 배경 */
-  .phone::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: env(safe-area-inset-top, 0px);
-    background: #ffffff;
-    z-index: 100;
-    pointer-events: none;
-  }
-  /* 페이지 콘텐츠는 상태바(안전영역) 아래에서 시작 */
-  .screen,
-  .cabinetpage,
-  .pdetailpage,
-  .regpage,
-  .reqpage,
-  .confirm-page,
-  .detectpage,
-  .flowpage,
-  .albumpage {
-    top: env(safe-area-inset-top, 0px);
-  }
-  /* 하단 네비: 홈 인디케이터(하단 안전영역) 위로 올려 잘림 방지 */
-  .bottom-nav {
-    bottom: calc(33px + env(safe-area-inset-bottom, 0px));
   }
 }
 
